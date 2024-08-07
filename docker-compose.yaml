@@ -1,0 +1,27 @@
+services:
+  whisper-rocm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: whisper:rocm-5.7
+    restart: unless-stopped
+    ports:
+      - "7860:7860"
+    container_name: gradio-webui
+    devices:
+      - "/dev/kfd:/dev/kfd"
+      - "/dev/dri:/dev/dri"
+    stdin_open: true
+    tty: true
+    cap_add:
+      - SYS_PTRACE
+    command: "/bin/bash"
+    security_opt:
+      - seccomp=unconfined
+    group_add:
+      - video
+    ipc: host
+    shm_size: 8G
+    volumes:
+      - ./outputs:/app/outputs/
+      - ./whisper-model:/app/whisper-model/
