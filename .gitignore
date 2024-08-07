@@ -90,3 +90,5 @@ env/
 # Editors
 .vscode/
 .idea/
+
+!*.sh
