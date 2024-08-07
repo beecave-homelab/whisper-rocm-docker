@@ -92,4 +92,4 @@ env/
 .idea/
 
 !*.sh
-!*requirements.txt
+!*.requirements.txt
