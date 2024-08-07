@@ -5,7 +5,7 @@ USER root
 
 # Install dependencies and rocm-5.7
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    && sudo ffmpeg \
+    sudo ffmpeg \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
