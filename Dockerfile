@@ -9,8 +9,7 @@ RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-WORKDIR /app
-COPY . .
+
 COPY sudo-nopasswd /etc/sudoers.d/sudo-nopasswd
 RUN useradd --create-home -G sudo,video --shell /bin/bash rocm-user
 USER rocm-user
@@ -21,6 +20,8 @@ ENV PATH "${PATH}:/opt/rocm/bin"
 USER rocm-user
 
 # Install specific packages using pip
+WORKDIR /app
+COPY . .
 RUN pip install --no-cache-dir --no-deps -r requirements.txt
 
 # Startup script
