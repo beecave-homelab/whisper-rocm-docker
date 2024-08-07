@@ -1,0 +1,9 @@
+gradio
+whisper
+torch
+python-dotenv
+datasets
+ipywidgets
+transformers
+numba
+openai-whisper
