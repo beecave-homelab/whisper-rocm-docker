@@ -23,7 +23,7 @@ USER rocm-user
 
 # Install specific packages using pip
 COPY . .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --no-deps -r requirements.txt
 RUN pip install -U pip
 RUN pip install gradio
 
