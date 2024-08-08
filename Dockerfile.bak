@@ -8,7 +8,7 @@ USER root
 
 # Install dependencies and rocm-5.7
 RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \ 
-    sudo wget git cmake rocsparse-dev hipsparse-dev rocthrust-dev rocblas-dev hipblas-dev make build-essential \
+    sudo wget git rocsparse-dev hipsparse-dev rocthrust-dev rocblas-dev hipblas-dev make build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -45,16 +45,15 @@ ENV ROCM_PATH=/opt/rocm
 ENV CLBlast_DIR=/usr/lib/cmake/CLBlast
 USER rocm-user
 
-RUN sudo apt-get update -y && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \ 
-    git gcc \
+RUN sudo apt-get update && sudo apt-get upgrade -y \
+    && sudo apt-get install -y git \ 
+    gcc \
     build-essential \
     python3 python3-pip \
     ocl-icd-opencl-dev opencl-headers clinfo \
     libclblast-dev libopenblas-dev libaio-dev \
     && mkdir -p /etc/OpenCL/vendors && echo "libamdrocopencl.so" | sudo tee /etc/OpenCL/vendors/amd.icd \
-    && sudo ln -s /usr/bin/python3 /usr/bin/python \
-    && sudo apt-get clean \
-    && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && sudo ln -s /usr/bin/python3 /usr/bin/python
 
 
 #######################################
@@ -62,26 +61,28 @@ RUN sudo apt-get update -y && sudo DEBIAN_FRONTEND=noninteractive apt-get instal
 ####################################### 
 FROM clblas-installer AS whisper-base
 
+# Install specific packages using pip
+RUN apt-get update -y \
+    && apt-get upgrade -y \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    sudo ffmpeg nano wget \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # # Login as rocm-user.    
 USER rocm-user
 ENV PATH="/home/rocm-user/.local/bin:${PATH}"
 
 # Install specific packages using pip
-RUN sudo apt-get update -y && sudo apt-get upgrade -y && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \ 
-    sudo ffmpeg nano wget \
-    && sudo apt-get clean \
-    && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Install specific packages using pip
 COPY . .
-RUN pip install datasets ipywidgets transformers numba openai-whisper python-dotenv
+RUN pip install datasets ipywidgets transformers numba openai-whisper -q
 RUN pip install -U pip
 RUN pip install gradio
 
 # Install dependencies and rocm-5.7
-# RUN pip install --no-cache-dir --no-deps -r requirements.txt
-# RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --force-reinstall torch torchaudio --index-url https://download.pytorch.org/whl/rocm5.7
+# RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/rocm5.7
+RUN pip install torch torchaudio --index-url https://download.pytorch.org/whl/rocm5.7
+RUN pip install --no-cache-dir --no-deps -r requirements.txt
 
 # Download test file:
 RUN wget https://www2.cs.uic.edu/~i101/SoundFiles/preamble.wav
