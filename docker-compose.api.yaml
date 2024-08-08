@@ -6,7 +6,7 @@ services:
     image: whisper:rocm-5.7
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "7860:7860"
     container_name: whisper-api
     devices:
       - "/dev/kfd:/dev/kfd"
