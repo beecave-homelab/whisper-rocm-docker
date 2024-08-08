@@ -7,7 +7,7 @@ USER root
 RUN apt-get update -y \
     && apt-get upgrade -y \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    sudo ffmpeg \
+    sudo ffmpeg nano wget \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -23,9 +23,10 @@ USER rocm-user
 
 # Install specific packages using pip
 COPY . .
-RUN pip install --no-cache-dir --no-deps -r requirements.txt
+RUN pip install datasets ipywidgets transformers numba openai-whisper -q
 RUN pip install -U pip
 RUN pip install gradio
+RUN wget https://www2.cs.uic.edu/~i101/SoundFiles/preamble.wav
 
 # Startup script
 # ENV HOST 0.0.0.0
