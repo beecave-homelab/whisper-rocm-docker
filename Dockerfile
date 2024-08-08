@@ -16,6 +16,7 @@ RUN useradd --create-home -G sudo,video --shell /bin/bash rocm-user
 USER rocm-user
 WORKDIR /home/rocm-user
 ENV PATH "${PATH}:/opt/rocm/bin"
+ENV PATH="/home/rocm-user/.local/bin:${PATH}"
 
 # # Login as rocm-user.    
 USER rocm-user
