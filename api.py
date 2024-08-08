@@ -14,7 +14,7 @@ PORT = int(os.getenv("PORT", 5000))
 
 app = Flask(__name__)
 
-@app.route('/', methods=['POST'])
+@app.route('/v1/audio/transcriptions', methods=['POST'])
 def handler():
     if not request.files:
         # If the user didn't submit any files, return a 400 (Bad Request) error.
@@ -43,4 +43,9 @@ def handler():
     return {'results': results}
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=PORT)
+    app.run(host='0.0.0.0', port=PORT, debug=True)
+
+
+    # TO DO
+    # - Add support for all functionality named in this guide: https://platform.openai.com/docs/api-reference/audio/createTranscription
+    # - Add support for all functionality named in this guide: https://platform.openai.com/docs/api-reference/audio/createTranslation
