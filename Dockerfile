@@ -4,11 +4,12 @@ FROM rocm/pytorch:rocm6.1_ubuntu22.04_py3.10_pytorch_2.4 AS whisper-base
 USER root
 
 # Install dependencies and rocm-5.7
-RUN apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+RUN apt-get update -y \
+    && apt-get upgrade -y \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     sudo ffmpeg \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 
 COPY sudo-nopasswd /etc/sudoers.d/sudo-nopasswd
 RUN useradd --create-home -G sudo,video --shell /bin/bash rocm-user
@@ -20,12 +21,11 @@ ENV PATH "${PATH}:/opt/rocm/bin"
 USER rocm-user
 
 # Install specific packages using pip
-WORKDIR /app
 COPY . .
-RUN pip install --no-cache-dir --no-deps -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Startup script
 ENV HOST 0.0.0.0
 ENV GRADIO_SERVER_NAME="${HOST}"
 EXPOSE 7860
-ENTRYPOINT ["sh", "-c", "app.py"]
+CMD ["python", "app.py"]
