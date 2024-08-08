@@ -28,7 +28,7 @@ RUN pip install -U pip
 RUN pip install gradio
 
 # Startup script
-ENV HOST 0.0.0.0
-ENV GRADIO_SERVER_NAME="${HOST}"
+# ENV HOST 0.0.0.0
+ENV GRADIO_SERVER_NAME="0.0.0.0"
 EXPOSE 7860
 CMD ["python", "app.py"]
