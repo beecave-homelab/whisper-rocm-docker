@@ -8,6 +8,7 @@
 !modules/
 !modules/__init__.py
 !modules/whisper_integration.py
+!sudo-nopasswd
 
 ## Tests
 !testing/
