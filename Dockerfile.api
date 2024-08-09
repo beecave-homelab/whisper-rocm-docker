@@ -72,26 +72,27 @@ RUN sudo apt-get update -y && sudo apt-get upgrade -y && sudo DEBIAN_FRONTEND=no
     && sudo apt-get clean \
     && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+# Copy files to workdir and change permissions.
+COPY --chown=rocm-user:rocm-user . .
+
 # Install specific packages using pip
-COPY . .
-# RUN pip install datasets ipywidgets transformers numba openai-whisper python-dotenv
-# RUN pip install flask openai-whisper python-dotenv
 RUN pip install -U pip
-# RUN pip install gradio
 
 # Install dependencies and rocm-5.7
-# RUN pip install --no-cache-dir --no-deps -r requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --force-reinstall torch torchaudio --index-url https://download.pytorch.org/whl/rocm5.7
 
-# Download test file:
-# RUN wget https://www2.cs.uic.edu/~i101/SoundFiles/preamble.wav
-
-# Startup script
-# ENV HOST 0.0.0.0
+# Set host and port environment variables.
 ENV HOST=0.0.0.0
 ENV PORT=5000
 
+# Exposed ports
 EXPOSE ${PORT}
 
-CMD ["python", "api.py"]
+# Startup script
+CMD ["python", "testing/test_app.py"]
+
+
+#######################################
+###########  END OF SETUP  ############
+####################################### 
