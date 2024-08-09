@@ -2,8 +2,8 @@ services:
   whisper-rocm:
     build:
       context: .
-      dockerfile: Dockerfile.api.minimal
-    image: whisper-api:rocm-5.7-minimal
+      dockerfile: Dockerfile.api.min
+    image: whisper-api:rocm-5.7-small
     container_name: whisper-api-minimal
     restart: unless-stopped
 
