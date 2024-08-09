@@ -30,10 +30,11 @@ services:
     shm_size: 8G
 
     volumes:
-      - ./outputs:/app/outputs/
-      - ./whisper-model:/app/whisper-model/
+      - ./outputs:outputs/
+      - ./whisper-model:whisper-model/
+      - ./uploads:uploads/
 
     env_file:
       - .env
 
-    command: ["python", "test_app.py"]
+    command: ["python", "testing/test_app.py"]

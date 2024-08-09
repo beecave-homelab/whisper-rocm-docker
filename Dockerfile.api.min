@@ -91,8 +91,9 @@ RUN sudo apt-get update -y && sudo apt-get upgrade -y && sudo DEBIAN_FRONTEND=no
     && sudo apt-get clean \
     && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-
+# Copy files to workdir and change permissions.
 COPY . .
+RUN chown -R rocm-user:rocm-user /home/rocm-user/whisper-rocm
 
 # Install specific packages using pip
 RUN pip install -U pip
@@ -112,7 +113,7 @@ ENV PORT=5000
 EXPOSE ${PORT}
 
 # Startup script
-CMD ["python", "api.py"]
+CMD ["python", "testing/test_app.py"]
 
 
 #######################################
