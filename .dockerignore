@@ -22,3 +22,7 @@
 ## .wav file for testing the application
 !uploads
 !uploads/preamble.wav
+
+# whisper model for testing
+!whisper-model
+!whisper-model/medium.en.pt
