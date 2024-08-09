@@ -92,8 +92,8 @@ RUN sudo apt-get update -y && sudo apt-get upgrade -y && sudo DEBIAN_FRONTEND=no
     && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy files to workdir and change permissions.
-COPY . .
-RUN chown -R rocm-user:rocm-user /home/rocm-user/whisper-rocm
+COPY api.py .
+COPY --chown=rocm-user:rocm-user . .
 
 # Install specific packages using pip
 RUN pip install -U pip
@@ -101,9 +101,6 @@ RUN pip install -U pip
 # Install dependencies and rocm-5.7
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --force-reinstall torch torchaudio --index-url https://download.pytorch.org/whl/rocm5.7
-
-# Download test file:
-# RUN wget https://www2.cs.uic.edu/~i101/SoundFiles/preamble.wav
 
 # Set host and port environment variables.
 ENV HOST=0.0.0.0
