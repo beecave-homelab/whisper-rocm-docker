@@ -2,7 +2,6 @@ import whisper
 import urllib.request
 import os
 from dotenv import load_dotenv
-from 
 
 # Load environment variables from .env file
 load_dotenv()
