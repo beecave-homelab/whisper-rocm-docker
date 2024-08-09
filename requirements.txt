@@ -1,9 +1,13 @@
-gradio
-whisper
-torch
-python-dotenv
-datasets
-ipywidgets
-transformers
-numba
+# gradio
+# whisper
+# torch
+# python-dotenv
+# datasets
+# ipywidgets
+# transformers
+# numba
+# openai-whisper
+
+flask
 openai-whisper
+python-dotenv
