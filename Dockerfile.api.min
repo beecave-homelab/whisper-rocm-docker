@@ -92,7 +92,6 @@ RUN sudo apt-get update -y && sudo apt-get upgrade -y && sudo DEBIAN_FRONTEND=no
     && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy files to workdir and change permissions.
-COPY api.py .
 COPY --chown=rocm-user:rocm-user . .
 
 # Install specific packages using pip
