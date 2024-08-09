@@ -92,3 +92,4 @@ env/
 .idea/
 
 !*.sh
+whisper-model/medium.en.pt
