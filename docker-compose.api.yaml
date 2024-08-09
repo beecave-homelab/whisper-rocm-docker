@@ -3,11 +3,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.api
-    image: whisper:rocm-5.7
-    restart: unless-stopped
-    ports:
-      - "5000:5000"
+    image: whisper-api:rocm-5.7
     container_name: whisper-api
+    restart: unless-stopped
+
+    environment:
+      HOST: ${HOST}
+      PORT: ${PORT}
+
+    ports:
+      - "${PORT}:${PORT}"
+
+    # To allow Docker access to the AMD GPU
     devices:
       - "/dev/kfd:/dev/kfd"
       - "/dev/dri:/dev/dri"
@@ -15,13 +22,18 @@ services:
     tty: true
     cap_add:
       - SYS_PTRACE
-    command: "/bin/bash"
     security_opt:
       - seccomp=unconfined
     group_add:
       - video
     ipc: host
     shm_size: 8G
+
     volumes:
       - ./outputs:/app/outputs/
       - ./whisper-model:/app/whisper-model/
+
+    env_file:
+      - .env
+
+    command: ["python", "api.py"]

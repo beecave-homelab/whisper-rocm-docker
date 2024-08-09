@@ -46,6 +46,6 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0', port=PORT, debug=True)
 
 
-    # TO DO
-    # - Add support for all functionality named in this guide: https://platform.openai.com/docs/api-reference/audio/createTranscription
-    # - Add support for all functionality named in this guide: https://platform.openai.com/docs/api-reference/audio/createTranslation
+# TO DO
+# - Add support for all functionality named in this guide: https://platform.openai.com/docs/api-reference/audio/createTranscription
+# - Add support for all functionality named in this guide: https://platform.openai.com/docs/api-reference/audio/createTranslation
