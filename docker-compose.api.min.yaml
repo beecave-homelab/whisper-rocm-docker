@@ -36,4 +36,4 @@ services:
     env_file:
       - .env
 
-    command: ["python", "api.py"]
+    command: ["python", "test_app.py"]
