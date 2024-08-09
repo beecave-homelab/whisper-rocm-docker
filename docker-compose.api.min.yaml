@@ -30,12 +30,15 @@ services:
     shm_size: 8G
 
     volumes:
-      # - ./outputs:$HOME/whisper-rocm/outputs/
-      # - ./whisper-model:$HOME/whisper-rocm/whisper-model/
-      # - ./uploads:$HOME/whisper-rocm/uploads/
-      - ./outputs:outputs
-      - ./whisper-model:whisper-model
-      - ./uploads:uploads
+      - ./outputs:$HOME/whisper-rocm/outputs
+      - ./whisper-model:$HOME/whisper-rocm/whisper-model
+      - ./uploads:$HOME/whisper-rocm/uploads
+      # - ./outputs:outputs
+      # - ./whisper-model:whisper-model
+      # - ./uploads:uploads
+      # - ./outputs:/home/rocm-user/whisper-rocm/outputs
+      # - ./whisper-model:/home/rocm-user/whisper-rocm/whisper-model
+      # - ./uploads:/home/rocm-user/whisper-rocm/uploads
 
     env_file:
       - .env
