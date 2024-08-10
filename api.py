@@ -1,51 +1,88 @@
+import whisper
+import urllib.request
+import os
+import threading
+import time
 from flask import Flask, abort, request
 from tempfile import NamedTemporaryFile
 from modules.whisper_integration import transcribe_audio
-import os
 from dotenv import load_dotenv
+import logging
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Environment variables
-MODEL_NAME = os.getenv("MODEL_NAME", "base")
-TEMPERATURE = float(os.getenv("TEMPERATURE", 0.7))
-PORT = int(os.getenv("PORT", 5000))
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+
+# Environment variables with error handling
+try:
+    MODEL_NAME = os.getenv("MODEL_NAME", "base")
+    TEMPERATURE = float(os.getenv("TEMPERATURE", 0.7))
+    PORT = int(os.getenv("PORT", 5000))
+    TIMEOUT_DURATION = int(os.getenv("TIMEOUT_DURATION", 600))  # Default to 600 seconds (10 minutes)
+except ValueError as e:
+    raise ValueError("Invalid environment variable configuration") from e
 
 app = Flask(__name__)
 
+# Global variables to manage model and timeout
+model = None
+last_request_time = None
+
+# Function to load the model
+def load_model():
+    global model
+    if model is None:
+        logging.info(f"Loading Whisper model: {MODEL_NAME}")
+        model = whisper.load_model(MODEL_NAME)
+    return model
+
+# Function to unload the model
+def unload_model():
+    global model
+    if model is not None:
+        logging.info("Unloading Whisper model due to inactivity")
+        model = None
+
+# Function to track the last request time and unload the model if timeout occurs
+def track_inactivity():
+    global last_request_time
+    while True:
+        if last_request_time and (time.time() - last_request_time) > TIMEOUT_DURATION:
+            unload_model()
+            last_request_time = None
+        time.sleep(60)  # Check every minute
+
+# Start the inactivity tracking thread
+inactivity_thread = threading.Thread(target=track_inactivity, daemon=True)
+inactivity_thread.start()
+
 @app.route('/v1/audio/transcriptions', methods=['POST'])
 def handler():
+    global last_request_time
+    last_request_time = time.time()
+
     if not request.files:
-        # If the user didn't submit any files, return a 400 (Bad Request) error.
         abort(400)
 
-    # For each file, let's store the results in a list of dictionaries.
     results = []
 
-    # Loop over every file that the user submitted.
     for filename, handle in request.files.items():
-        # Create a temporary file.
-        # The location of the temporary file is available in `temp.name`.
-        temp = NamedTemporaryFile()
-        # Write the user's uploaded file to the temporary file.
-        # The file will get deleted when it drops out of scope.
-        handle.save(temp)
-        # Let's get the transcript of the temporary file.
-        transcript = transcribe_audio(temp.name)
-        # Now we can store the result object for this file.
-        results.append({
-            'filename': filename,
-            'transcript': transcript,
-        })
+        if handle.mimetype not in ['audio/wav', 'audio/mpeg']:
+            abort(400, description="Unsupported file type")
+        
+        with NamedTemporaryFile() as temp:
+            handle.save(temp)
+            model_instance = load_model()  # Load model if not already loaded
+            transcript = model_instance.transcribe(temp.name)
+            results.append({
+                'filename': filename,
+                'transcript': transcript,
+            })
 
-    # This will be automatically converted to JSON.
     return {'results': results}
 
 if __name__ == "__main__":
+    logging.info(f"Starting server on port {PORT}")
     app.run(host='0.0.0.0', port=PORT, debug=True)
-
-
-# TO DO
-# - Add support for all functionality named in this guide: https://platform.openai.com/docs/api-reference/audio/createTranscription
-# - Add support for all functionality named in this guide: https://platform.openai.com/docs/api-reference/audio/createTranslation
