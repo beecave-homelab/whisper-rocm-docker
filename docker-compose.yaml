@@ -3,7 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: whisper:rocm-5.7
+    image: ghcr.io/beecave-homelab/whisper-rocm-docker:rocm-5.7
+    container_name: whisper-webui
     restart: unless-stopped
 
     environment:
@@ -29,11 +30,11 @@ services:
     shm_size: 8G
 
     volumes:
-      - ./outputs:outputs/
-      - ./whisper-model:whisper-model/
-      - ./uploads:uploads/
+      - ./outputs:$HOME/whisper-rocm/outputs
+      - ./whisper-model:$HOME/whisper-rocm/whisper-model
+      - ./uploads:$HOME/whisper-rocm/uploads
 
     env_file:
       - .env
-    
-    command: ["python", "app.py"]
+
+    command: ["python", "api.py"]
